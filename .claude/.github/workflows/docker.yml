@@ -24,3 +24,15 @@ jobs:
         docker push ${​{ secrets.DOCKER_USERNAME }}/al-app:latest
         docker push ${​{ secrets.DOCKER_USERNAME }}/al-db-loader:latest
         docker push ${​{ secrets.DOCKER_USERNAME }}/al-email:latest        
+deploy:
+  needs: [build]
+  runs-on: ubuntu-latest     
+  steps:
+  -name: '**PLACEHOLDER: DEPLOY TO KUBERNETES**'   
+  run: echo "This is where you would add steps to deploy to Kubernetes or your hosting provider of choice. You can use the Docker images built in the previous step." 
+  -name: Run containers
+  run: |
+    docker run -d --name app -p 3006:3006 --link dbhost --link redis-server ${​{ secrets.DOCKER_USERNAME }}/al-app:latest
+    docker run -d --name dbhost -e MYSQL_ROOT_PASSWORD=yourpassword ${​{ secrets.DOCKER_USERNAME }}/al-dbhost:latest
+    docker run -d --name email -p 25:25 --link redis-server ${​{ secrets.DOCKER_USERNAME }}/al-email:latest
+    
